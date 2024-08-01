@@ -17,16 +17,10 @@ public class PropertyOwnerRepository implements Repository<PropertyOwner> {
 
     private EntityManager entityManager;
 
-    private final Map<Long, PropertyOwner> propertyOwners = new HashMap<>();
-
 
     @Override
     public PropertyOwner create(PropertyOwner propertyOwner) {
-        if (propertyOwner == null || propertyOwners.containsKey(propertyOwner.getId())) {
-            throw new IllegalArgumentException("PropertyOwner is null or already exists");
-        }
-        propertyOwners.put(propertyOwner.getId(), propertyOwner);
-        return propertyOwner;
+        return null;
     }
 
 
