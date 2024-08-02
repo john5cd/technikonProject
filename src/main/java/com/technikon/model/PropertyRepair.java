@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 import javax.persistence.*;
 
 import lombok.*;
-
-@Data
+@Getter
+@Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,13 +27,13 @@ public class PropertyRepair implements Serializable {
     private Property property;
 
     @Column(nullable = false)
-    private String typeOfRepair; //Enum
+    private TypeOfRepairEnum typeOfRepair; //Enum
 
     @Column(nullable = false)
     private String shortDescription;
 
     @Column(nullable = false)
-    private LocalDateTime submissionDate; //ok
+    private LocalDateTime submissionDate; 
 
     @Column(nullable = false)
     private String description;
@@ -42,15 +42,22 @@ public class PropertyRepair implements Serializable {
 
     private LocalDate proposedEndDate;
 
-    private int proposedCost;//auto iswn na to kanoyme kai int alla den einai toso geniko
+    private int proposedCost;
 
     private boolean ownerAcceptance;
 
     @Column(nullable = false)
-    private String status;//enum
+    private StatusOfRepairEnum status;
 
     private LocalDate actualStartDate;
 
     private LocalDate actualEndDate;
     // Constructors, Getters, Setters, toString() from lombok
+
+    @Override
+    public String toString() {
+        return "PropertyRepair{" + "repairId=" + repairId + ", propertyOwner=" + propertyOwner.getId() + ", property=" + property.getId() + ", typeOfRepair=" + typeOfRepair + ", shortDescription=" + shortDescription + ", submissionDate=" + submissionDate + ", description=" + description + ", proposedStartDate=" + proposedStartDate + ", proposedEndDate=" + proposedEndDate + ", proposedCost=" + proposedCost + ", ownerAcceptance=" + ownerAcceptance + ", status=" + status + ", actualStartDate=" + actualStartDate + ", actualEndDate=" + actualEndDate + '}';
+    }
+    
+    
 }

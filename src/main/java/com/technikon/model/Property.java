@@ -4,13 +4,15 @@ import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -39,5 +41,11 @@ public class Property implements Serializable {
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PropertyRepair> propertyRepairs;
+
+    @Override
+    public String toString() {
+        return "Property{" + "id=" + id + ", propertyId=" + propertyId + ", address=" + address + ", yearOfConstruction=" + yearOfConstruction + ", propertyType=" + propertyType + ", propertyOwner=" + propertyOwner.getId() + ", propertyRepairs=" + propertyRepairs + '}';
+    }
+    
     
 }
