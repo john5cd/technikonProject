@@ -2,33 +2,36 @@ package com.technikon.repository;
 
 import com.technikon.exception.OwnerNotFoundException;
 import com.technikon.model.PropertyOwner;
+import static java.lang.Math.log;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.persistence.EntityManager;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import javax.persistence.TypedQuery;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Data
 @AllArgsConstructor
 public class PropertyOwnerRepository implements Repository<PropertyOwner> {
 
     private EntityManager entityManager;
 
-
     @Override
     public PropertyOwner create(PropertyOwner propertyOwner) {
-        return null;
+        entityManager.getTransaction().begin();
+        entityManager.persist(propertyOwner);
+        entityManager.getTransaction().commit();
+        return propertyOwner;
     }
 
-
     @Override
-    public  void update(PropertyOwner propertyOwner) {
-            entityManager.getTransaction().begin();
-            entityManager.merge(propertyOwner);
-            entityManager.getTransaction().commit();
+    public void update(PropertyOwner propertyOwner) {
+        entityManager.getTransaction().begin();
+        entityManager.merge(propertyOwner);
+        entityManager.getTransaction().commit();
     }
 
     @Override
@@ -39,16 +42,26 @@ public class PropertyOwnerRepository implements Repository<PropertyOwner> {
     }
 
     @Override
-    public <V> Optional<PropertyOwner> findById(V v) {
+    public <V> Optional<PropertyOwner> findById(V id) {
+        try {
+            entityManager.getTransaction().begin();
+            PropertyOwner owner = entityManager.find(PropertyOwner.class, id);
+            entityManager.getTransaction().commit();
+            return Optional.of(owner);
+        } catch (Exception e) {
+            log.debug("Owner not found");
+        }
         return Optional.empty();
     }
 
     @Override
     public List<PropertyOwner> findAll() {
-        return null;
+        TypedQuery<PropertyOwner> query
+                = entityManager.createQuery("SELECT po FROM PropertyOwner po", PropertyOwner.class);
+        return query.getResultList();
     }
 
-    public PropertyOwner searchByEmail (String email) {
+    public PropertyOwner searchByEmail(String email) {
 
         List owner = entityManager.createQuery("SELECT po FROM PropertyOwner po WHERE po.email LIKE: givenEmail")
                 .setParameter("givenEmail", email)
@@ -61,7 +74,7 @@ public class PropertyOwnerRepository implements Repository<PropertyOwner> {
         return (PropertyOwner) owner.get(0);
     }
 
-    public PropertyOwner searchByVat (Long vat) {
+    public PropertyOwner searchByVat(Long vat) {
 
         List owner = entityManager.createQuery("SELECT po FROM PropertyOwner po WHERE po.vat LIKE ?1")
                 .setParameter(1, vat)

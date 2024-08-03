@@ -7,7 +7,9 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class PropertyRepairRepository implements Repository<PropertyRepair> {
 
     private EntityManager entityManager;
@@ -61,12 +63,22 @@ public class PropertyRepairRepository implements Repository<PropertyRepair> {
 
     @Override
     public List<PropertyRepair> findAll() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        TypedQuery<PropertyRepair> query =
+                entityManager.createQuery("SELECT po FROM PropertyRepair po", PropertyRepair.class);
+        return query.getResultList();
     }
 
     @Override
-    public <V> Optional<PropertyRepair> findById(V v) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public <V> Optional<PropertyRepair> findById(V id) {
+        try {
+            entityManager.getTransaction().begin();
+            PropertyRepair repair = entityManager.find(PropertyRepair.class, id);
+            entityManager.getTransaction().commit();
+            return Optional.of(repair);
+        } catch (Exception e) {
+            log.debug("Property's repair not found");
+        }
+        return Optional.empty();
     }
 
 }
