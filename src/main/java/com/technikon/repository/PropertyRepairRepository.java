@@ -53,6 +53,13 @@ public class PropertyRepairRepository implements Repository<PropertyRepair> {
         query.setParameter("endDate", endDate, TemporalType.TIMESTAMP);
         return query.getResultList();
     }
+    
+    public List<PropertyRepair> searchBySubmissionDate(Date submissionDate) {
+        TypedQuery<PropertyRepair> query = entityManager.createQuery(
+                "SELECT r FROM PropertyRepair r WHERE r.submissionDate = :submissionDate", PropertyRepair.class);
+        query.setParameter("submissionDate", submissionDate, TemporalType.TIMESTAMP);
+        return query.getResultList();
+    }
 
     public List<PropertyRepair> searchByOwnerId(Long ownerId) {
         TypedQuery<PropertyRepair> query = entityManager.createQuery(
