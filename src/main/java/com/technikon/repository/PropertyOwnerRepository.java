@@ -2,13 +2,13 @@ package com.technikon.repository;
 
 import com.technikon.exception.OwnerNotFoundException;
 import com.technikon.model.PropertyOwner;
-import static java.lang.Math.log;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,7 +20,7 @@ public class PropertyOwnerRepository implements Repository<PropertyOwner> {
     private EntityManager entityManager;
 
     @Override
-    public PropertyOwner create(PropertyOwner propertyOwner) {
+    public PropertyOwner create(PropertyOwner propertyOwner) throws PersistenceException {
         entityManager.getTransaction().begin();
         entityManager.persist(propertyOwner);
         entityManager.getTransaction().commit();
@@ -28,14 +28,14 @@ public class PropertyOwnerRepository implements Repository<PropertyOwner> {
     }
 
     @Override
-    public void update(PropertyOwner propertyOwner) {
+    public void update(PropertyOwner propertyOwner) throws PersistenceException {
         entityManager.getTransaction().begin();
         entityManager.merge(propertyOwner);
         entityManager.getTransaction().commit();
     }
 
     @Override
-    public void delete(PropertyOwner propertyOwner) {
+    public void delete(PropertyOwner propertyOwner) throws IllegalArgumentException, NullPointerException{
         entityManager.getTransaction().begin();
         entityManager.remove(propertyOwner);
         entityManager.getTransaction().commit();
