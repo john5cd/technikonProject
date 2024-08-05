@@ -56,9 +56,12 @@ public class PropertyRepair implements Serializable {
 
     private LocalDate actualEndDate;
     // Constructors, Getters, Setters, toString() from lombok
+    
+    @Column(name = "isActive", nullable = false)
+    private Boolean isActive;
 
     @Override
     public String toString() {
-        return "PropertyRepair{" + "repairId=" + repairId + ", propertyOwner=" + propertyOwner.getId() + ", property=" + property.getId() + ", typeOfRepair=" + typeOfRepair + ", shortDescription=" + shortDescription + ", submissionDate=" + submissionDate + ", description=" + description + ", proposedStartDate=" + proposedStartDate + ", proposedEndDate=" + proposedEndDate + ", proposedCost=" + proposedCost + ", ownerAcceptance=" + ownerAcceptance + ", status=" + status + ", actualStartDate=" + actualStartDate + ", actualEndDate=" + actualEndDate + '}';
+        return "PropertyRepair{" + "repairId=" + repairId + ", propertyOwner=" + propertyOwner.getId() + ", property=" + property.getId() + ", typeOfRepair=" + typeOfRepair + ", shortDescription=" + shortDescription + ", submissionDate=" + submissionDate + ", description=" + description + ", proposedStartDate=" + proposedStartDate + ", proposedEndDate=" + proposedEndDate + ", proposedCost=" + proposedCost + ", ownerAcceptance=" + ownerAcceptance + ", status=" + status + ", actualStartDate=" + actualStartDate + ", actualEndDate=" + actualEndDate + ", isActive=" + isActive +'}';
     }
 }

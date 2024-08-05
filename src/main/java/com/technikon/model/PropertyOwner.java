@@ -44,6 +44,9 @@ public class PropertyOwner implements Serializable {
 
     @Column(name = "password", nullable = false)
     private String password;
+    
+    @Column(name = "isActive", nullable = false)
+    private Boolean isActive;
 
     @OneToMany(mappedBy = "propertyOwner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Property> properties;
