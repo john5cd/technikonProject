@@ -57,5 +57,29 @@ public class PropertyRepository implements Repository<Property> {
                 entityManager.createQuery("SELECT po FROM Property po", Property.class);
         return query.getResultList();
     }
+    
+    public Optional<Property> findByPropertyIdNumber(Long propertyId) {
+        try {
+            TypedQuery<Property> query = entityManager.createQuery(
+            "SELECT p FROM Property p WHERE p.propertyId = :propertyId", Property.class);
+            query.setParameter("propertyId", propertyId);
+            List<Property> result = query.getResultList();
+            if (result.isEmpty()) {
+                return Optional.empty();
+            } else {
+                return Optional.of(result.get(0));
+            }
+        } catch (Exception e) {
+            log.debug("Property with this propertyid not found");
+        }
+        return Optional.empty();
+    }
+    
+    public List<Property> findByOwnerVatNumber(Long vatNumber) {
+        TypedQuery<Property> query = entityManager.createQuery(
+            "SELECT p FROM Property p WHERE p.propertyOwner.vat = :vatNumber", Property.class);
+        query.setParameter("vatNumber", vatNumber);
+        return query.getResultList();
+    }
 
 }
