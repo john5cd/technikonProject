@@ -58,7 +58,7 @@ public class PropertyRepair implements Serializable {
     // Constructors, Getters, Setters, toString() from lombok
     
     @Column(name = "isActive", nullable = false)
-    private Boolean isActive;
+    private Boolean isActive; 
 
     @Override
     public String toString() {
