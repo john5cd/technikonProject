@@ -67,7 +67,7 @@ public class RunExamples {
         System.out.println(propertyOwner);
         System.out.println(property.get());
         try {
-            propertyRepairService.initiateRepair(propertyOwner, property.get(), TypeOfRepairEnum.PAINTING, "paint", LocalDate.now().atTime(22, 45), "painting");
+            propertyRepairService.initiateRepair(propertyOwner.getId(), property.get().getId(), TypeOfRepairEnum.PAINTING, "paint", "painting");
         } catch (PersistenceException e) {
             System.out.println(e.getMessage());
         } catch (NoSuchElementException e) {
