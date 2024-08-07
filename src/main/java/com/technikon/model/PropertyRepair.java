@@ -35,7 +35,7 @@ public class PropertyRepair implements Serializable {
     private String shortDescription;
 
     @Column(nullable = false)
-    private LocalDateTime submissionDate;
+    private LocalDate submissionDate;
 
     @Column(nullable = false)
     private String description;
