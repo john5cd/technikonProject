@@ -60,6 +60,18 @@ public class PropertyOwnerServiceImpl implements PropertyOwnerService{
                 throw new InvalidInputException("This is not a valid phone number");
             }
 
+            propertyOwner = PropertyOwner.builder()
+                    .vat(Long.valueOf(vat))
+                    .phoneNumber(Long.valueOf(phoneNumber))
+                    .address(address)
+                    .firstName(firstName)
+                    .lastName(lastName)
+                    .password(password)
+                    .userName(userName)
+                    .email(email)
+                    .isActive(true)
+                    .build();
+
             // throws a persistence exception
             propertyOwnerRepository.create(propertyOwner);
             return propertyOwner;
@@ -85,6 +97,19 @@ public class PropertyOwnerServiceImpl implements PropertyOwnerService{
         }
     }
 
+    public void safeDelete(PropertyOwner propertyOwner) throws PersistenceException {
+
+        PropertyOwner existingOwner = get(propertyOwner.getId());
+        try {
+            existingOwner.setIsActive(false);
+            propertyOwnerRepository.update(existingOwner);
+
+            // throws an exception if something goes wrong with the propertyOwnerRepository.update
+        } catch (PersistenceException e) {
+            throw new OwnerNotFoundException("This is not an existing owner");
+        }
+    }
+
     @Override
     public void update(PropertyOwner updatedPropertyOwner) throws InvalidInputException, PropertyOwnerExistsException, OwnerNotFoundException {
 
@@ -97,7 +122,8 @@ public class PropertyOwnerServiceImpl implements PropertyOwnerService{
                     !existingOwner.getLastName().equals(updatedPropertyOwner.getLastName()) ||
                     !existingOwner.getPhoneNumber().equals(updatedPropertyOwner.getPhoneNumber()) ||
                     !existingOwner.getVat().equals(updatedPropertyOwner.getVat()) ||
-                    !existingOwner.getUserName().equals(updatedPropertyOwner.getUserName())){
+                    !existingOwner.getUserName().equals(updatedPropertyOwner.getUserName()) ||
+                     existingOwner.getIsActive()!=updatedPropertyOwner.getIsActive()){
 
                 throw new InvalidInputException("You tried to update an unmodifiable field. You can only update the email, password and address");
             }

@@ -47,6 +47,9 @@ public class PropertyOwnerRepository implements Repository<PropertyOwner> {
             entityManager.getTransaction().begin();
             PropertyOwner owner = entityManager.find(PropertyOwner.class, id);
             entityManager.getTransaction().commit();
+            if (owner.getIsActive()==false) {
+                return Optional.empty();
+            }
             return Optional.of(owner);
         } catch (Exception e) {
             log.debug("Owner not found");
@@ -57,17 +60,21 @@ public class PropertyOwnerRepository implements Repository<PropertyOwner> {
     @Override
     public List<PropertyOwner> findAll() {
         TypedQuery<PropertyOwner> query
-                = entityManager.createQuery("SELECT po FROM PropertyOwner po", PropertyOwner.class);
+                = entityManager.createQuery("SELECT po FROM PropertyOwner po WHERE po.isActive=true", PropertyOwner.class);
         return query.getResultList();
     }
 
     public PropertyOwner searchByEmail(String email) {
 
-        List owner = entityManager.createQuery("SELECT po FROM PropertyOwner po WHERE po.email LIKE: givenEmail")
+        List<PropertyOwner> owner = entityManager.createQuery("SELECT po FROM PropertyOwner po WHERE po.email LIKE: givenEmail")
                 .setParameter("givenEmail", email)
                 .getResultList();
 
         if (owner.isEmpty()) {
+            throw new OwnerNotFoundException("This is not an existing owner");
+        }
+
+        if (owner.get(0).getIsActive()==false) {
             throw new OwnerNotFoundException("This is not an existing owner");
         }
 
@@ -76,13 +83,18 @@ public class PropertyOwnerRepository implements Repository<PropertyOwner> {
 
     public PropertyOwner searchByVat(Long vat) {
 
-        List owner = entityManager.createQuery("SELECT po FROM PropertyOwner po WHERE po.vat LIKE ?1")
+        List<PropertyOwner> owner = entityManager.createQuery("SELECT po FROM PropertyOwner po WHERE po.vat LIKE ?1")
                 .setParameter(1, vat)
                 .getResultList();
 
         if (owner.isEmpty()) {
             throw new OwnerNotFoundException("This is not an existing owner");
         }
+
+        if (owner.get(0).getIsActive()==false) {
+            throw new OwnerNotFoundException("This is not an existing owner");
+        }
+
         return (PropertyOwner) owner.get(0);
     }
 }
