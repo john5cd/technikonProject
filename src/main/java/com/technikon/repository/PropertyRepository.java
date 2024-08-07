@@ -37,14 +37,21 @@ public class PropertyRepository implements Repository<Property> {
         entityManager.remove(property);
         entityManager.getTransaction().commit();
     }
+    
+    public void softDelete(Property property) {
+        entityManager.getTransaction().begin();
+        property.setIsActive(false);
+        entityManager.merge(property);
+        entityManager.getTransaction().commit();
+    }
 
     @Override
     public <V> Optional<Property> findById(V id) {
         try {
-            entityManager.getTransaction().begin();
             Property property = entityManager.find(Property.class, id);
-            entityManager.getTransaction().commit();
-            return Optional.of(property);
+            if (property != null && property.getIsActive()) {
+                return Optional.of(property);
+            }
         } catch (Exception e) {
             log.debug("Property not found");
         }
@@ -53,15 +60,15 @@ public class PropertyRepository implements Repository<Property> {
 
     @Override
     public List<Property> findAll() {
-        TypedQuery<Property> query =
-                entityManager.createQuery("SELECT po FROM Property po", Property.class);
+        TypedQuery<Property> query = entityManager.createQuery(
+                "SELECT p FROM Property p WHERE p.isActive = true", Property.class);
         return query.getResultList();
     }
     
     public Optional<Property> findByPropertyIdNumber(Long propertyId) {
         try {
             TypedQuery<Property> query = entityManager.createQuery(
-            "SELECT p FROM Property p WHERE p.propertyId = :propertyId", Property.class);
+                "SELECT p FROM Property p WHERE p.propertyId = :propertyId AND p.isActive = true", Property.class);
             query.setParameter("propertyId", propertyId);
             List<Property> result = query.getResultList();
             if (result.isEmpty()) {
@@ -77,7 +84,7 @@ public class PropertyRepository implements Repository<Property> {
     
     public List<Property> findByOwnerVatNumber(Long vatNumber) {
         TypedQuery<Property> query = entityManager.createQuery(
-            "SELECT p FROM Property p WHERE p.propertyOwner.vat = :vatNumber", Property.class);
+            "SELECT p FROM Property p WHERE p.propertyOwner.vat = :vatNumber AND p.isActive = true", Property.class);
         query.setParameter("vatNumber", vatNumber);
         return query.getResultList();
     }

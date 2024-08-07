@@ -1,5 +1,9 @@
 package com.technikon.services;
 
+import com.technikon.exception.DuplicateEntryException;
+import com.technikon.exception.InvalidYearException;
+import com.technikon.exception.OwnerNotFoundException;
+import com.technikon.exception.ResourceNotFoundException;
 import com.technikon.model.Property;
 import com.technikon.model.PropertyOwner;
 import com.technikon.model.PropertyType;
@@ -36,13 +40,13 @@ public class PropertyServiceImpl implements PropertyService{
         Optional<PropertyOwner> owner = propertyOwnerRepository.findById(propertyOwnerId);
         
         if (!owner.isPresent()) {
-            throw new IllegalArgumentException("Owner with ID " + propertyOwnerId + " does not exist."); //TODO custom exception
+            throw new OwnerNotFoundException("Owner with ID " + propertyOwnerId + " does not exist.");
         }
         //check if property id (e9) is unique
         Optional<Property> existingProperty = propertyRepository.findByPropertyIdNumber(propertyIdNumber);
         
         if (existingProperty.isPresent()) {
-            throw new IllegalArgumentException("Property with ID " + propertyIdNumber + " already exists."); //TODO custom exception
+            throw new DuplicateEntryException("Property with ID " + propertyIdNumber + " already exists.");
         }
         
         Property property = Property.builder()
@@ -51,6 +55,7 @@ public class PropertyServiceImpl implements PropertyService{
                 .yearOfConstruction(yearOfConstruction)
                 .propertyType(propertyType)
                 .propertyOwner(owner.get())
+                .isActive(true)
                 .build();
         
         return propertyRepository.create(property);
@@ -59,8 +64,8 @@ public class PropertyServiceImpl implements PropertyService{
     @Override
     public Property updateProperty(Long id, Long propertyIdNumber, String address, int yearOfConstruction, PropertyType propertyType, Long propertyOwnerId) {
         Optional<Property> propertyToUpdateCheck = propertyRepository.findById(id);
-        if (!propertyToUpdateCheck.isPresent()){
-            throw new IllegalArgumentException("Property with ID " + id + " does not exist."); //TODO custom exception
+        if (!propertyToUpdateCheck.isPresent() || !propertyToUpdateCheck.get().getIsActive()){
+            throw new ResourceNotFoundException("Property with ID " + id + " does not exist or is inactive.");
         }
         
         Property propertyToUpdate = propertyToUpdateCheck.get();
@@ -70,7 +75,7 @@ public class PropertyServiceImpl implements PropertyService{
             //check if the propertyId already exists
             Optional<Property> existingPropertyWithSameIdNumber = findByPropertyIdNumber(propertyIdNumber);
             if (existingPropertyWithSameIdNumber.isPresent()) {
-                throw new IllegalArgumentException("Property with identification number " + propertyIdNumber + " already exists."); //TODO create custom exception
+                throw new DuplicateEntryException("Property with identification number " + propertyIdNumber + " already exists.");
             }
             propertyToUpdate.setPropertyId(propertyIdNumber);
         }
@@ -82,7 +87,7 @@ public class PropertyServiceImpl implements PropertyService{
         if (yearOfConstruction > 1800 && yearOfConstruction <= java.time.Year.now().getValue()) {
             propertyToUpdate.setYearOfConstruction(yearOfConstruction);
         } else if (yearOfConstruction != 0) {
-            throw new IllegalArgumentException("Year of construction must be between 1800 and the current year."); //TODO custom exception
+            throw new InvalidYearException("Year of construction must be between 1800 and the current year.");
         }
         
         if (propertyType != null) {
@@ -92,7 +97,7 @@ public class PropertyServiceImpl implements PropertyService{
         if (propertyOwnerId != null) {
             Optional<PropertyOwner> owner = propertyOwnerRepository.findById(propertyOwnerId);
             if (!owner.isPresent()) {
-                throw new IllegalArgumentException("Owner with ID " + propertyOwnerId + " does not exist."); //TODO custom exception
+                throw new OwnerNotFoundException("Owner with ID " + propertyOwnerId + " does not exist.");
             }
             propertyToUpdate.setPropertyOwner(owner.get());
         }
@@ -107,12 +112,24 @@ public class PropertyServiceImpl implements PropertyService{
     @Override
     public Property deleteProperty(Long id) {
         Optional<Property> propertyToDeleteCheck = propertyRepository.findById(id);
-        if (!propertyToDeleteCheck.isPresent()) {
-            throw new IllegalArgumentException("Property with ID " + id + " does not exist.");
+        if (!propertyToDeleteCheck.isPresent() || !propertyToDeleteCheck.get().getIsActive()) {
+            throw new ResourceNotFoundException("Property with ID " + id + " does not exist or is inactive.");
         }
         
         Property propertyToDelete = propertyToDeleteCheck.get();
         propertyRepository.delete(propertyToDelete);
+        return propertyToDelete;
+    }
+    
+    @Override
+    public Property softDeleteProperty(Long id){
+        Optional<Property> propertyToDeleteCheck = propertyRepository.findById(id);
+        if (!propertyToDeleteCheck.isPresent() || !propertyToDeleteCheck.get().getIsActive()) {
+            throw new ResourceNotFoundException("Property with ID " + id + " does not exist or is inactive.");
+        }
+        
+        Property propertyToDelete = propertyToDeleteCheck.get();
+        propertyRepository.softDelete(propertyToDelete);
         return propertyToDelete;
     }
 
