@@ -31,7 +31,7 @@ public class RunExamples {
         PropertyServiceImpl propertyService = new PropertyServiceImpl(propertyRepository, propertyOwnerRepository);
 
         PropertyRepairRepository propertyRepairRepository = new PropertyRepairRepository(entityManager);
-        PropertyRepairServiceImpl propertyRepairService = new PropertyRepairServiceImpl(propertyRepairRepository);
+        PropertyRepairServiceImpl propertyRepairService = new PropertyRepairServiceImpl(propertyOwnerRepository, propertyRepository, propertyRepairRepository);
 
         //makeRepair(propertyRepairService, propertyOwnerService, propertyService);
 
