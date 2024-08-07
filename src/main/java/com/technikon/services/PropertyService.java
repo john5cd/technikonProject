@@ -12,4 +12,5 @@ public interface PropertyService {
     Optional<Property> findByPropertyIdNumber(Long propertyIdNumber);
     List<Property> findByOwnerVatNumber(Long vatNumber);
     Property deleteProperty(Long id);
+    Property softDeleteProperty(Long id);
 }

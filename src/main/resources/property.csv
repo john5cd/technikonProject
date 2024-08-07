@@ -1,0 +1,4 @@
+propertyId,address,yearOfConstruction,propertyType,propertyOwner_id
+1001,123 Oak St,2000,DETACHED_HOUSE,1
+1002,456 Pine St,2005,MAISONETTE,1
+1003,789 Maple St,2010,APARTMENT_BUILDING,1
