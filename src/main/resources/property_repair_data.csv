@@ -1,0 +1,5 @@
+propertyOwner_id,property_id,typeOfRepair,shortDescription,submissionDate,description,proposedStartDate,proposedEndDate,proposedCost,ownerAcceptance,status,actualStartDate,actualEndDate,isActive
+1,1001,PAINTING,Fix the living room wall,2023-07-30,Painting the living room wall,2023-08-01,2023-08-05,500,true,PENDING,2023-08-01,2023-08-04,true
+3,1002,PLUMBING,Fix the kitchen sink,2023-07-29,Plumbing work in the kitchen,2023-08-02,2023-08-06,300,false,DECLINED,null,null,true
+3,1003,ELECTRICALWORK,Repair the bedroom lights,2023-07-28,Electrical work in the bedroom,2023-08-03,2023-08-07,400,true,COMPLETE,2023-08-03,2023-08-06,true
+
