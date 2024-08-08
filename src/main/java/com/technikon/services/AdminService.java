@@ -15,4 +15,5 @@ public interface AdminService {
     PropertyRepair repairProposition(Long repairId, String newStatus,  LocalDate proposedStartDate, LocalDate proposedEndDate, int proposedCost);
     List<PropertyRepair> getActiveRepairs();
     List<PropertyRepair> getInactiveRepairs();
+    List<PropertyRepair> getAllPendingRepairs();
 }
