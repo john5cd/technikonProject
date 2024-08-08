@@ -1,5 +1,7 @@
 package com.technikon.services;
 
+import com.technikon.exception.InvalidInputException;
+import com.technikon.exception.PropertyNotFoundException;
 import com.technikon.model.Admin;
 import com.technikon.model.Property;
 import com.technikon.model.PropertyRepair;
@@ -10,6 +12,7 @@ import com.technikon.repository.PropertyRepairRepository;
 import com.technikon.repository.PropertyRepository;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.EntityManager;
 
 public class AdminServiceImpl implements AdminService {
@@ -55,37 +58,47 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public PropertyRepair repairProposition(Long repairId, String newStatus, LocalDate proposedStartDate, LocalDate proposedEndDate, int proposedCost) {
+    public PropertyRepair repairProposition(Long repairId, String newStatus, LocalDate proposedStartDate, LocalDate proposedEndDate, int proposedCost)
+            throws PropertyNotFoundException, InvalidInputException {
         // Find the repair by ID
-        PropertyRepair repair = propertyRepairRepository.findById(repairId)
-                .orElseThrow(() -> new IllegalStateException("Repair with id " + repairId + " does not exist"));
+        Optional<PropertyRepair> optionalPropertyRepair = propertyRepairRepository.findById(repairId);
 
-        // Validate and set the new status
-        try {
-            StatusOfRepairEnum statusEnum = StatusOfRepairEnum.valueOf(newStatus);
-            repair.setStatus(statusEnum);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalStateException("Invalid status: " + newStatus);
+        if (optionalPropertyRepair.isEmpty()) {
+            throw new PropertyNotFoundException("Repair with id " + repairId + " does not exist");
+        } else {
+            PropertyRepair repair = optionalPropertyRepair.get();
+
+            // Validate and set the new status
+            try {
+                StatusOfRepairEnum statusEnum = StatusOfRepairEnum.valueOf(newStatus);
+                repair.setStatus(statusEnum);
+            } catch (IllegalArgumentException e) {
+                throw new InvalidInputException("Invalid status: " + newStatus);
+            }
+
+            // Update the proposed cost and dates
+            repair.setProposedCost(proposedCost);
+            repair.setProposedStartDate(proposedStartDate);
+            repair.setProposedEndDate(proposedEndDate);
+
+            // Save the updated repair
+            propertyRepairRepository.update(repair);
+
+            return repair;
+        }
+    }
+
+        @Override
+        public List<PropertyRepair> getActiveRepairs
+        
+            () {
+        return adminRepository.getActiveRepairs();
         }
 
-        // Update the proposed cost and dates
-        repair.setProposedCost(proposedCost);
-        repair.setProposedStartDate(proposedStartDate);
-        repair.setProposedEndDate(proposedEndDate);
+        @Override
+        public List<PropertyRepair> getInactiveRepairs
         
-        // Save the updated repair
-        propertyRepairRepository.update(repair);
-
-        return repair;
-    }
-
-    @Override
-    public List<PropertyRepair> getActiveRepairs() {
-        return adminRepository.getActiveRepairs();
-    }
-
-    @Override
-    public List<PropertyRepair> getInactiveRepairs() {
+            () {
         return adminRepository.getInactiveRepairs();
+        }
     }
-}
