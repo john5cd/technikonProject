@@ -88,17 +88,18 @@ public class AdminServiceImpl implements AdminService {
         }
     }
 
-        @Override
-        public List<PropertyRepair> getActiveRepairs
-        
-            () {
+    @Override
+    public List<PropertyRepair> getActiveRepairs() {
         return adminRepository.getActiveRepairs();
-        }
-
-        @Override
-        public List<PropertyRepair> getInactiveRepairs
-        
-            () {
-        return adminRepository.getInactiveRepairs();
-        }
     }
+
+    @Override
+    public List<PropertyRepair> getInactiveRepairs() {
+        return adminRepository.getInactiveRepairs();
+    }
+
+    @Override
+    public List<PropertyRepair> getAllPendingRepairs() {
+        return adminRepository.getAllPendingRepairs();
+    }
+}

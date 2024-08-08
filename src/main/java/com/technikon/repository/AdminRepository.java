@@ -2,6 +2,7 @@ package com.technikon.repository;
 
 import com.technikon.model.Admin;
 import com.technikon.model.PropertyRepair;
+import com.technikon.model.StatusOfRepairEnum;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -64,6 +65,13 @@ public class AdminRepository {
     public List<PropertyRepair> getInactiveRepairs() {
         TypedQuery<PropertyRepair> query = entityManager.createQuery(
                 "SELECT pr FROM PropertyRepair pr WHERE pr.isActive = false", PropertyRepair.class);
+        return query.getResultList();
+    }
+    
+      public List<PropertyRepair> getAllPendingRepairs() {
+        TypedQuery<PropertyRepair> query = entityManager.createQuery(
+                "SELECT pr FROM PropertyRepair pr WHERE pr.status = :status", PropertyRepair.class);
+        query.setParameter("status", StatusOfRepairEnum.PENDING);
         return query.getResultList();
     }
 }
