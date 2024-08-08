@@ -7,9 +7,15 @@ import com.technikon.model.TypeOfRepairEnum;
 import com.technikon.repository.PropertyOwnerRepository;
 import com.technikon.repository.PropertyRepairRepository;
 import com.technikon.repository.PropertyRepository;
+import com.technikon.services.PropertyOwnerService;
 import com.technikon.services.PropertyOwnerServiceImpl;
+import com.technikon.services.PropertyRepairService;
 import com.technikon.services.PropertyRepairServiceImpl;
+import com.technikon.services.PropertyService;
 import com.technikon.services.PropertyServiceImpl;
+import com.technikon.util.PropertyCSVImporter;
+import com.technikon.util.PropertyRepairCSVImport;
+import java.io.IOException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -25,13 +31,40 @@ public class RunExamples {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
 
         PropertyOwnerRepository propertyOwnerRepository = new PropertyOwnerRepository(entityManager);
-        PropertyOwnerServiceImpl propertyOwnerService = new PropertyOwnerServiceImpl(propertyOwnerRepository);
+        PropertyOwnerService propertyOwnerService = new PropertyOwnerServiceImpl(propertyOwnerRepository);
 
         PropertyRepository propertyRepository = new PropertyRepository(entityManager);
-        PropertyServiceImpl propertyService = new PropertyServiceImpl(propertyRepository, propertyOwnerRepository);
+        PropertyService propertyService = new PropertyServiceImpl(propertyRepository, propertyOwnerRepository);
 
         PropertyRepairRepository propertyRepairRepository = new PropertyRepairRepository(entityManager);
-        PropertyRepairServiceImpl propertyRepairService = new PropertyRepairServiceImpl(propertyOwnerRepository, propertyRepository, propertyRepairRepository);
+        PropertyRepairService propertyRepairService = new PropertyRepairServiceImpl(propertyOwnerRepository, propertyRepository, propertyRepairRepository);
+        
+        PropertyCSVImporter cSVImporter = new PropertyCSVImporter(propertyService);
+        PropertyRepairCSVImport propertyRepairCSVImport = new PropertyRepairCSVImport(propertyRepairRepository, propertyRepository, propertyOwnerRepository);
+        
+        try {
+            propertyRepairCSVImport.propertyRepairImportFromCSV();
+        }
+        catch (IOException e){
+            System.out.println(e.getMessage());
+        }
+
+        
+//                try {
+//           
+//            cSVImporter.importPropertiesFromCSV();
+//            
+//            
+//        } catch (IOException e) {
+//            System.out.println(e.getMessage());
+//        }
+//        
+
+        
+                
+        //propertyOwnerService.create("sam", "duhaw", "sam@gmail.com", "sammy", "6911122233", "ermou 12", "1111122222", "aAs12!@");
+        
+        
 
         //makeRepair(propertyRepairService, propertyOwnerService, propertyService);
 

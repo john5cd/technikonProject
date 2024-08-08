@@ -19,7 +19,7 @@ public class PropertyRepairCSVImport {
     private final PropertyRepairRepository propertyRepairRepository;
     private final PropertyRepository propertyRepository;
     private final PropertyOwnerRepository propertyOwnerRepository;
-    private static final String PROPERTIES_FILE = "src/main/resources/PropertyRepairCSVImport";
+    private static final String PROPERTIES_FILE = "src/main/resources/property_repair_data.csv";
 
     public PropertyRepairCSVImport(PropertyRepairRepository propertyRepairRepository, PropertyRepository propertyRepository, PropertyOwnerRepository propertyOwnerRepository) {
         this.propertyRepairRepository = propertyRepairRepository;
